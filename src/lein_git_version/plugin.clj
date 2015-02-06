@@ -5,6 +5,9 @@
 
 (defn middleware
   [project]
-  (-> project
-      (assoc :version (get-git-version))
-      (assoc :branch  (get-git-branch))))
+  (let [v (get-git-version)
+        b (get-git-branch)
+        s (str v "::" b)]
+   (-> project
+       (assoc :version v)
+       (assoc-in [:manifest "Implementation-Version"] s))))
