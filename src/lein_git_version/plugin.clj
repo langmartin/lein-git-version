@@ -7,8 +7,4 @@
   [project]
   (-> project
       (assoc :version (get-git-version))
-      (assoc-in
-       [:manifest "Implementation-Version"]
-       (str (get-git-version)
-            "::"
-            (get-git-branch)))))
+      (assoc :branch  (get-git-branch))))
