@@ -9,12 +9,31 @@
   (:use
    [clojure.java.shell :only [sh]]))
 
+(defn- trimv
+  [version]
+  (when (and (string? version)
+             (not-empty version)
+             (= \v (first version)))
+    (subs version 1)))
+
+(def ^:private dirty "--dirty=-SNAPSHOT")
+
 (defn get-git-version
+  ([]
+   (or (-> (get-git-version "--always" "--match" "v*.*" dirty)
+           (trimv))
+       (get-git-version "--always" dirty)))
+  ([& cmd]
+   (-> (apply sh "git" "describe" cmd)
+       (:out)
+       (.trim)
+       (not-empty))))
+
+(defn get-git-branch
   []
-  (apply str (rest (clojure.string/trim
-                    (:out (sh
-                           "git" "describe" "--match" "v*.*"
-                           "--abbrev=4" "--dirty=**DIRTY**"))))))
+  (-> (sh "git" "describe" "--contains" "--all" "HEAD")
+      (:out)
+      (.trim)))
 
 (defn git-version
   "Show project version, as tagged in git."
