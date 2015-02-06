@@ -20,9 +20,9 @@
 
 (defn get-git-version
   ([]
-   (or (-> (get-git-version "--always" "--match" "v*.*" dirty)
+   (or (-> (get-git-version "--always" "--tags" "--match" "v*.*" dirty)
            (trimv))
-       (get-git-version "--always" dirty)))
+       (get-git-version "--always" "--tags" dirty)))
   ([& cmd]
    (-> (apply sh "git" "describe" cmd)
        (:out)
