@@ -14,7 +14,8 @@ It then substitutes that version into the project on the fly, so every
 lein task that uses the project version sees the one obtained from
 git.
 
-In addition, it injects a file into <project>/src/<project>/version.clj, containing a def for the version.
+In addition, it writes the version::branch into the manifest so you
+can access from an uberjar.
 
 ## Usage
 
