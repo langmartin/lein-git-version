@@ -11,18 +11,14 @@
 
 (defn- trimv
   [version]
-  (when (and (string? version)
-             (not-empty version)
-             (= \v (first version)))
-    (subs version 1)))
-
-(def ^:private dirty "--dirty=-SNAPSHOT")
+  (if (and (string? version)
+           (not-empty version)
+           (= \v (first version)))
+    (subs version 1)
+    version))
 
 (defn get-git-version
-  ([]
-   (or (-> (get-git-version "--always" "--tags" "--match" "v*.*" dirty)
-           (trimv))
-       (get-git-version "--always" "--tags" dirty)))
+  ([] (trimv (get-git-version "--always" "--tags" "--dirty=-DIRTY")))
   ([& cmd]
    (-> (apply sh "git" "describe" cmd)
        (:out)
