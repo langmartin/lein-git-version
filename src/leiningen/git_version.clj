@@ -17,13 +17,21 @@
     (subs version 1)
     version))
 
-(defn get-git-version
-  ([] (trimv (get-git-version "--always" "--tags" "--dirty=-DIRTY")))
+(defn git-describe
+  ([] (trimv (git-describe "--always" "--tags" "--dirty=-DIRTY")))
   ([& cmd]
    (-> (apply sh "git" "describe" cmd)
        (:out)
        (.trim)
        (not-empty))))
+
+(defn get-git-version
+  []
+  (let [v (git-describe)]
+    (if (or (re-find #"-[0-9]+-g[0-9a-f]{7}" v)
+            (re-find #"-DIRTY$" v))
+      (str v "-SNAPSHOT")
+      v)))
 
 (defn get-git-branch
   []
